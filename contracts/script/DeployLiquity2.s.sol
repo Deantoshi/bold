@@ -67,18 +67,20 @@ contract DeployLiquity2Script is DeployGovernance, UniPriceConverter, StdCheats,
     string constant DEPLOYMENT_MODE_BOLD_ONLY = "bold-only";
     string constant DEPLOYMENT_MODE_USE_EXISTING_BOLD = "use-existing-bold";
 
-    address WETH_ADDRESS = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
-    address USDC_ADDRESS = 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
+    address WETH_ADDRESS = 0x4200000000000000000000000000000000000006;
+    address USDC_ADDRESS = 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913;
 
     // used for gas compensation and as collateral of the first branch
     // tapping disallowed
     IWETH WETH;
     IERC20Metadata USDC;
-    address WSTETH_ADDRESS = 0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0;
-    address RETH_ADDRESS = 0xae78736Cd615f374D3085123A210448E74Fc6393;
-    address ETH_ORACLE_ADDRESS = 0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419;
-    address RETH_ORACLE_ADDRESS = 0x536218f9E9Eb48863970252233c8F271f554C2d0;
-    address STETH_ORACLE_ADDRESS = 0xCfE54B5cD566aB89272946F602D76Ea879CAb4a8;
+    address WSTETH_ADDRESS = 0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452;
+    address RETH_ADDRESS = 0xB6fe221Fe9EeF5aBa221c348bA20A1Bf5e73624c;
+    address ETH_ORACLE_ADDRESS = 0x71041dddad3595F9CEd3DcCFBe3D1F4b0a16Bb70;
+    address WSTETH_USD_ORACLE_ADDRESS = 0xD1D60f675fbb6cE30d7305CFe244152317003004; // added this one
+    address RETH_ORACLE_ADDRESS = 0xf397bF97280B488cA19ee3093E81C0a77F02e9a5;
+    address RETH_USD_ORACLE_ADDRESS = 0x2eADcC800506ce0ADCAca45a8F585253677Eaa3e; // added this one
+    address STETH_ORACLE_ADDRESS = 0x3a4ea21729f8556547E1243608872C8827DdEEd7;
     uint256 ETH_USD_STALENESS_THRESHOLD = 24 hours;
     uint256 STETH_USD_STALENESS_THRESHOLD = 24 hours;
     uint256 RETH_ETH_STALENESS_THRESHOLD = 48 hours;
@@ -100,7 +102,7 @@ contract DeployLiquity2Script is DeployGovernance, UniPriceConverter, StdCheats,
         ICurveStableswapNGFactory(0xfb37b8D939FFa77114005e61CFc2e543d6F49A81);
     // Mainnet
     ICurveStableswapNGFactory constant curveStableswapFactoryMainnet =
-        ICurveStableswapNGFactory(0x6A8cbed756804B16E05E741eDaBd5cB544AE21bf);
+        ICurveStableswapNGFactory(0xd2002373543Ce3527023C75e7518C274A51ce712);
     uint128 constant BOLD_TOKEN_INDEX = 0;
     uint128 constant OTHER_TOKEN_INDEX = 1;
 
@@ -120,11 +122,11 @@ contract DeployLiquity2Script is DeployGovernance, UniPriceConverter, StdCheats,
     INonfungiblePositionManager constant uniV3PositionManagerSepolia =
         INonfungiblePositionManager(0x1238536071E1c677A632429e3655c799b22cDA52);
     // Mainnet
-    ISwapRouter constant uniV3RouterMainnet = ISwapRouter(0xE592427A0AEce92De3Edee1F18E0157C05861564);
-    IQuoterV2 constant uniV3QuoterMainnet = IQuoterV2(0x61fFE014bA17989E743c5F6cB21bF9697530B21e);
-    IUniswapV3Factory constant uniswapV3FactoryMainnet = IUniswapV3Factory(0x1F98431c8aD98523631AE4a59f267346ea31F984);
+    ISwapRouter constant uniV3RouterMainnet = ISwapRouter(0x2626664c2603336E57B271c5C0b26F421741e481);
+    IQuoterV2 constant uniV3QuoterMainnet = IQuoterV2(0x3d4e44Eb1374240CE5F1B871ab261CD16335B76a);
+    IUniswapV3Factory constant uniswapV3FactoryMainnet = IUniswapV3Factory(0x33128a8fC17869897dcE68Ed026d694621f6FDfD);
     INonfungiblePositionManager constant uniV3PositionManagerMainnet =
-        INonfungiblePositionManager(0xC36442b4a4522E871399CD717aBDD847Ab11FE88);
+        INonfungiblePositionManager(0x03a520b32C04BF3bEEf7BEb72E919cf822Ed34f1);
 
     // Balancer
     IVault constant balancerVault = IVault(0xBA12222222228d8Ba445958a75a0704d566BF2C8);
@@ -136,7 +138,7 @@ contract DeployLiquity2Script is DeployGovernance, UniPriceConverter, StdCheats,
     // Mainnet
     // https://docs.balancer.fi/reference/contracts/deployment-addresses/mainnet.html
     IWeightedPoolFactory constant balancerFactoryMainnet =
-        IWeightedPoolFactory(0x897888115Ada5773E02aA29F775430BFB5F34c51);
+        IWeightedPoolFactory(0xbA1333333333a1BA1108E8412f11850A5C319bA9);
 
     bytes32 SALT;
     address deployer;
@@ -247,7 +249,7 @@ contract DeployLiquity2Script is DeployGovernance, UniPriceConverter, StdCheats,
 
         uint256 epochStart = vm.envOr(
             "EPOCH_START",
-            (block.chainid == 1 ? _latestUTCMidnightBetweenWednesdayAndThursday() : block.timestamp) - EPOCH_DURATION
+            (block.chainid == 8453 ? _latestUTCMidnightBetweenWednesdayAndThursday() : block.timestamp) - EPOCH_DURATION
         );
 
         useTestnetPriceFeeds = vm.envOr("USE_TESTNET_PRICEFEEDS", false);
@@ -282,8 +284,8 @@ contract DeployLiquity2Script is DeployGovernance, UniPriceConverter, StdCheats,
             return;
         }
 
-        if (block.chainid == 1) {
-            // mainnet
+        if (block.chainid == 8453) {
+            // base
             WETH = IWETH(WETH_ADDRESS);
             USDC = IERC20Metadata(USDC_ADDRESS);
             curveStableswapFactory = curveStableswapFactoryMainnet;
@@ -413,7 +415,7 @@ contract DeployLiquity2Script is DeployGovernance, UniPriceConverter, StdCheats,
         }
 
         ICurveStableswapNGPool lusdCurvePool;
-        if (block.chainid == 1) {
+        if (block.chainid == 8453) {
             lusdCurvePool = _deployCurvePool(deployed.boldToken, IERC20Metadata(LUSD_ADDRESS));
         }
 
@@ -554,33 +556,35 @@ contract DeployLiquity2Script is DeployGovernance, UniPriceConverter, StdCheats,
         vars.addressesRegistries = new IAddressesRegistry[](vars.numCollaterals);
         vars.troveManagers = new ITroveManager[](vars.numCollaterals);
 
-        if (block.chainid == 1 && !useTestnetPriceFeeds) {
-            // mainnet
+        if (block.chainid == 8453 && !useTestnetPriceFeeds) {
+            // base
             // ETH
             vars.collaterals[0] = IERC20Metadata(WETH);
             vars.priceFeeds[0] = new WETHPriceFeed(deployer, ETH_ORACLE_ADDRESS, ETH_USD_STALENESS_THRESHOLD);
 
             // wstETH
             vars.collaterals[1] = IERC20Metadata(WSTETH_ADDRESS);
-            vars.priceFeeds[1] = new WSTETHPriceFeed(
-                deployer,
-                ETH_ORACLE_ADDRESS,
-                STETH_ORACLE_ADDRESS,
-                WSTETH_ADDRESS,
-                ETH_USD_STALENESS_THRESHOLD,
-                STETH_USD_STALENESS_THRESHOLD
-            );
+            vars.priceFeeds[1] = new WETHPriceFeed(deployer, WSTETH_USD_ORACLE_ADDRESS, ETH_USD_STALENESS_THRESHOLD);
+            // vars.priceFeeds[1] = new WSTETHPriceFeed(
+            //     deployer,
+            //     ETH_ORACLE_ADDRESS,
+            //     STETH_ORACLE_ADDRESS,
+            //     WSTETH_ADDRESS,
+            //     ETH_USD_STALENESS_THRESHOLD,
+            //     STETH_USD_STALENESS_THRESHOLD
+            // );
 
             // RETH
             vars.collaterals[2] = IERC20Metadata(RETH_ADDRESS);
-            vars.priceFeeds[2] = new RETHPriceFeed(
-                deployer,
-                ETH_ORACLE_ADDRESS,
-                RETH_ORACLE_ADDRESS,
-                RETH_ADDRESS,
-                ETH_USD_STALENESS_THRESHOLD,
-                RETH_ETH_STALENESS_THRESHOLD
-            );
+            vars.priceFeeds[2] = new WETHPriceFeed(deployer, RETH_USD_ORACLE_ADDRESS, ETH_USD_STALENESS_THRESHOLD);
+            // vars.priceFeeds[2] = new RETHPriceFeed(
+            //     deployer,
+            //     ETH_ORACLE_ADDRESS,
+            //     RETH_ORACLE_ADDRESS,
+            //     RETH_ADDRESS,
+            //     ETH_USD_STALENESS_THRESHOLD,
+            //     RETH_ETH_STALENESS_THRESHOLD
+            // );
         } else {
             // Sepolia
             // Use WETH as collateral for the first branch
