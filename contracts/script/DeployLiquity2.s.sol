@@ -76,7 +76,7 @@ contract DeployLiquity2Script is DeployGovernance, UniPriceConverter, StdCheats,
     IERC20Metadata USDC;
     address WSTETH_ADDRESS = 0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452;
     address RETH_ADDRESS = 0xB6fe221Fe9EeF5aBa221c348bA20A1Bf5e73624c;
-    address ETH_ORACLE_ADDRESS = 0x71041dddad3595F9CEd3DcCFBe3D1F4b0a16Bb70;
+    address ETH_ORACLE_ADDRESS = 0x699124D727E261FaB13d68bE7a9843a8245Fc579; // added this custom Pyth One
     address WSTETH_USD_ORACLE_ADDRESS = 0xD1D60f675fbb6cE30d7305CFe244152317003004; // added this one
     address RETH_ORACLE_ADDRESS = 0xf397bF97280B488cA19ee3093E81C0a77F02e9a5;
     address RETH_USD_ORACLE_ADDRESS = 0x2eADcC800506ce0ADCAca45a8F585253677Eaa3e; // added this one
