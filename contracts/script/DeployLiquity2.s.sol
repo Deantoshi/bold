@@ -85,6 +85,8 @@ contract DeployLiquity2Script is DeployGovernance, UniPriceConverter, StdCheats,
     uint256 STETH_USD_STALENESS_THRESHOLD = 24 hours;
     uint256 RETH_ETH_STALENESS_THRESHOLD = 48 hours;
 
+    uint256 WAIT_TIME = 10000;
+
     // V1
     address LQTY_ADDRESS = 0xC0D3700000c0e32716863323bFd936b54a1633d1; // CDX
     address LQTY_STAKING_ADDRESS = 0xA0a2aae7F21ded1dad17E43dD9A2372C175419F6; // custom one I launched
@@ -276,6 +278,7 @@ contract DeployLiquity2Script is DeployGovernance, UniPriceConverter, StdCheats,
             require(boldToken.owner() == deployer, "Not BOLD owner");
         } else {
             boldToken = new BoldToken{salt: SALT}(deployer);
+            vm.sleep(WAIT_TIME);
             assert(address(boldToken) == boldAddress);
         }
 
@@ -320,6 +323,7 @@ contract DeployLiquity2Script is DeployGovernance, UniPriceConverter, StdCheats,
 
             // Let stakingV1 spend anyone's LQTY without approval, like in the real LQTYStaking
             ERC20Faucet(lqty).mock_setWildcardSpender(address(stakingV1), true);
+            vm.sleep(WAIT_TIME);
         }
 
         TroveManagerParams[] memory troveManagerParamsArray = new TroveManagerParams[](3);
@@ -420,6 +424,7 @@ contract DeployLiquity2Script is DeployGovernance, UniPriceConverter, StdCheats,
         }
 
         // Governance
+        vm.sleep(WAIT_TIME);
         (address governanceAddress, string memory governanceManifest) = deployGovernance(
             deployGovernanceParams,
             address(curveStableswapFactory),
@@ -612,8 +617,11 @@ contract DeployLiquity2Script is DeployGovernance, UniPriceConverter, StdCheats,
         }
 
         r.collateralRegistry = new CollateralRegistry(r.boldToken, vars.collaterals, vars.troveManagers);
+        vm.sleep(WAIT_TIME);
         r.hintHelpers = new HintHelpers(r.collateralRegistry);
+        vm.sleep(WAIT_TIME);
         r.multiTroveGetter = new MultiTroveGetter(r.collateralRegistry);
+        vm.sleep(WAIT_TIME);
 
         // Deploy per-branch contracts for each branch
         for (vars.i = 0; vars.i < vars.numCollaterals; vars.i++) {
@@ -633,6 +641,7 @@ contract DeployLiquity2Script is DeployGovernance, UniPriceConverter, StdCheats,
         }
 
         r.boldToken.setCollateralRegistry(address(r.collateralRegistry));
+        vm.sleep(WAIT_TIME);
 
         // exchange helpers
         r.exchangeHelpers = new HybridCurveUniV3ExchangeHelpers(
@@ -645,6 +654,7 @@ contract DeployLiquity2Script is DeployGovernance, UniPriceConverter, StdCheats,
             UNIV3_FEE_WETH_COLL,
             uniV3Quoter
         );
+        vm.sleep(WAIT_TIME);
     }
 
     function _deployAddressesRegistry(TroveManagerParams memory _troveManagerParams)
@@ -659,6 +669,7 @@ contract DeployLiquity2Script is DeployGovernance, UniPriceConverter, StdCheats,
             _troveManagerParams.LIQUIDATION_PENALTY_SP,
             _troveManagerParams.LIQUIDATION_PENALTY_REDISTRIBUTION
         );
+        vm.sleep(WAIT_TIME);
         address troveManagerAddress = vm.computeCreate2Address(
             SALT, keccak256(getBytecode(type(TroveManager).creationCode, address(addressesRegistry)))
         );
@@ -740,17 +751,28 @@ contract DeployLiquity2Script is DeployGovernance, UniPriceConverter, StdCheats,
             WETH: WETH
         });
         contracts.addressesRegistry.setAddresses(addressVars);
+        vm.sleep(WAIT_TIME);
         contracts.priceFeed.setAddresses(addresses.borrowerOperations);
+        vm.sleep(WAIT_TIME);
 
         contracts.borrowerOperations = new BorrowerOperations{salt: SALT}(contracts.addressesRegistry);
+        vm.sleep(WAIT_TIME);
         contracts.troveManager = new TroveManager{salt: SALT}(contracts.addressesRegistry);
+        vm.sleep(WAIT_TIME);
         contracts.troveNFT = new TroveNFT{salt: SALT}(contracts.addressesRegistry);
+        vm.sleep(WAIT_TIME);
         contracts.stabilityPool = new StabilityPool{salt: SALT}(contracts.addressesRegistry);
+        vm.sleep(WAIT_TIME);
         contracts.activePool = new ActivePool{salt: SALT}(contracts.addressesRegistry);
+        vm.sleep(WAIT_TIME);
         contracts.defaultPool = new DefaultPool{salt: SALT}(contracts.addressesRegistry);
+        vm.sleep(WAIT_TIME);
         contracts.gasPool = new GasPool{salt: SALT}(contracts.addressesRegistry);
+        vm.sleep(WAIT_TIME);
         contracts.collSurplusPool = new CollSurplusPool{salt: SALT}(contracts.addressesRegistry);
+        vm.sleep(WAIT_TIME);
         contracts.sortedTroves = new SortedTroves{salt: SALT}(contracts.addressesRegistry);
+        vm.sleep(WAIT_TIME);
 
         assert(address(contracts.borrowerOperations) == addresses.borrowerOperations);
         assert(address(contracts.troveManager) == addresses.troveManager);
@@ -782,6 +804,7 @@ contract DeployLiquity2Script is DeployGovernance, UniPriceConverter, StdCheats,
         ICurveStableswapNGPool _usdcCurvePool
     ) internal returns (GasCompZapper gasCompZapper, WETHZapper wethZapper, ILeverageZapper leverageZapper) {
         IFlashLoanProvider flashLoanProvider = new BalancerFlashLoan();
+        vm.sleep(WAIT_TIME);
 
         IExchange hybridExchange = new HybridCurveUniV3Exchange(
             _collToken,
@@ -795,14 +818,18 @@ contract DeployLiquity2Script is DeployGovernance, UniPriceConverter, StdCheats,
             UNIV3_FEE_WETH_COLL,
             uniV3Router
         );
+        vm.sleep(WAIT_TIME);
 
         bool lst = _collToken != WETH;
         if (lst) {
             gasCompZapper = new GasCompZapper(_addressesRegistry, flashLoanProvider, hybridExchange);
+            vm.sleep(WAIT_TIME);
         } else {
             wethZapper = new WETHZapper(_addressesRegistry, flashLoanProvider, hybridExchange);
+            vm.sleep(WAIT_TIME);
         }
         leverageZapper = _deployHybridLeverageZapper(_addressesRegistry, flashLoanProvider, hybridExchange, lst);
+        vm.sleep(WAIT_TIME);
     }
 
     function _deployHybridLeverageZapper(
@@ -851,6 +878,7 @@ contract DeployLiquity2Script is DeployGovernance, UniPriceConverter, StdCheats,
             method_ids: methodIds,
             oracles: oracles
         });
+        vm.sleep(WAIT_TIME);
 
         return curvePool;
     }
@@ -903,6 +931,7 @@ contract DeployLiquity2Script is DeployGovernance, UniPriceConverter, StdCheats,
 
         ERC20Faucet(address(_contracts.collToken)).mint(deployer, collAmount);
         WETHTester(payable(address(WETH))).mint(deployer, ETH_GAS_COMPENSATION);
+        vm.sleep(WAIT_TIME);
 
         if (_contracts.collToken == WETH) {
             WETH.approve(address(_contracts.borrowerOperations), collAmount + ETH_GAS_COMPENSATION);
@@ -910,6 +939,7 @@ contract DeployLiquity2Script is DeployGovernance, UniPriceConverter, StdCheats,
             _contracts.collToken.approve(address(_contracts.borrowerOperations), collAmount);
             WETH.approve(address(_contracts.borrowerOperations), ETH_GAS_COMPENSATION);
         }
+        vm.sleep(WAIT_TIME);
 
         _contracts.borrowerOperations.openTrove({
             _owner: deployer,
@@ -924,6 +954,7 @@ contract DeployLiquity2Script is DeployGovernance, UniPriceConverter, StdCheats,
             _removeManager: address(0),
             _receiver: address(0)
         });
+        vm.sleep(WAIT_TIME);
     }
 
     struct ProvideUniV3LiquidityVars {
@@ -1027,17 +1058,22 @@ contract DeployLiquity2Script is DeployGovernance, UniPriceConverter, StdCheats,
 
         // mint
         ERC20Faucet(address(USDC)).mint(deployer, usdcAmount);
+        vm.sleep(WAIT_TIME);
         (uint256 price,) = _contracts.priceFeed.fetchPrice();
         _mintBold(boldAmount, price, _contracts);
+        vm.sleep(WAIT_TIME);
         // approve
         USDC.approve(address(usdcCurvePool), usdcAmount);
+        vm.sleep(WAIT_TIME);
         _boldToken.approve(address(usdcCurvePool), boldAmount);
+        vm.sleep(WAIT_TIME);
 
         uint256[] memory amountsDynamic = new uint256[](2);
         amountsDynamic[0] = boldAmount;
         amountsDynamic[1] = usdcAmount;
         // add liquidity
         usdcCurvePool.add_liquidity(amountsDynamic, 0);
+        vm.sleep(WAIT_TIME);
     }
 
     function formatAmount(uint256 amount, uint256 decimals, uint256 digits) internal pure returns (string memory) {
