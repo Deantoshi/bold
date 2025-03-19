@@ -86,9 +86,9 @@ contract DeployLiquity2Script is DeployGovernance, UniPriceConverter, StdCheats,
     uint256 RETH_ETH_STALENESS_THRESHOLD = 48 hours;
 
     // V1
-    address LQTY_ADDRESS = 0x6DEA81C8171D0bA574754EF6F8b412F2Ed88c54D;
-    address LQTY_STAKING_ADDRESS = 0x4f9Fbb3f1E99B56e0Fe2892e623Ed36A76Fc605d;
-    address LUSD_ADDRESS = 0x5f98805A4E8be255a32880FDeC7F6728C6568bA0;
+    address LQTY_ADDRESS = 0xC0D3700000c0e32716863323bFd936b54a1633d1; // CDX
+    address LQTY_STAKING_ADDRESS = 0xA0a2aae7F21ded1dad17E43dD9A2372C175419F6; // custom one I launched
+    address LUSD_ADDRESS = 0xC0D3700000987C99b3C9009069E4f8413fD22330; //cdxUSD
 
     address internal lqty;
     address internal stakingV1;
