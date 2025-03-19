@@ -14,6 +14,10 @@ fs_permissions = [
 slow = true
 timeout = 15
 
+[etherscan]
+# base 
+base = { key = "18GK6W4J9K7BDSMUSN987K14GWVUPKHVYC" }
+
 [invariant]
 call_override = false
 fail_on_revert = true
